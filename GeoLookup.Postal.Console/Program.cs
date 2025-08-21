@@ -15,6 +15,10 @@ else if (commandArgs.Length > 1 && commandArgs[1] == "create-sample-data")
 {
     CreateSampleData();
 }
+else if (commandArgs.Length > 1 && commandArgs[1] == "test-resources")
+{
+    TestEmbeddedResources();
+}
 else
 {
     RunDemo();
@@ -154,6 +158,48 @@ static void CreateSampleData()
     catch (Exception ex)
     {
         Console.WriteLine($"✗ Error creating sample data: {ex.Message}");
+    }
+}
+
+static void TestEmbeddedResources()
+{
+    Console.WriteLine("\nTesting embedded resources...");
+    
+    try
+    {
+        var assembly = System.Reflection.Assembly.GetAssembly(typeof(GeoLookup.Postal.PostalCodeLookup));
+        if (assembly != null)
+        {
+            var resourceNames = assembly.GetManifestResourceNames();
+            Console.WriteLine($"Found {resourceNames.Length} embedded resources:");
+            
+            foreach (var name in resourceNames)
+            {
+                Console.WriteLine($"  - {name}");
+                
+                using var stream = assembly.GetManifestResourceStream(name);
+                if (stream != null)
+                {
+                    Console.WriteLine($"    Size: {stream.Length} bytes");
+                }
+                else
+                {
+                    Console.WriteLine($"    ERROR: Could not load resource");
+                }
+            }
+        }
+        else
+        {
+            Console.WriteLine("Could not load assembly");
+        }
+
+        // Test the actual lookup
+        using var lookup = new GeoLookup.Postal.PostalCodeLookup();
+        Console.WriteLine("✓ PostalCodeLookup created successfully");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"✗ Error: {ex.Message}");
     }
 }
 

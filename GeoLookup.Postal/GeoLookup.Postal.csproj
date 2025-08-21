@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>GeoLookup.Postal</PackageId>
-    <PackageVersion>1.1.1</PackageVersion>
+    <PackageVersion>1.1.2</PackageVersion>
     <Authors>QAFarmer</Authors>
     <Description>High-performance postal code geolocation library using GeoNames data with binary search optimization for US and Canada postal codes. Now with automatic country detection!</Description>
     <PackageLicenseExpression>CC-BY-4.0</PackageLicenseExpression>
