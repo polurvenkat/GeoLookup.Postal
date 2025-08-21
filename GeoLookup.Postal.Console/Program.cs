@@ -11,6 +11,10 @@ if (commandArgs.Length > 1 && commandArgs[1] == "download-and-process")
 {
     await DownloadAndProcessData();
 }
+else if (commandArgs.Length > 1 && commandArgs[1] == "create-sample-data")
+{
+    CreateSampleData();
+}
 else
 {
     RunDemo();
@@ -123,6 +127,34 @@ static void RunDemo()
     
     Console.WriteLine("\nTo download and process real GeoNames data, run:");
     Console.WriteLine("  dotnet run download-and-process");
+    Console.WriteLine("\nTo create sample data for testing, run:");
+    Console.WriteLine("  dotnet run create-sample-data");
+}
+
+static void CreateSampleData()
+{
+    Console.WriteLine("\nCreating sample data...");
+    
+    var indexPath = Path.Combine("../GeoLookup.Postal/Data", "PostalCodeIndex.dat");
+    var dataPath = Path.Combine("../GeoLookup.Postal/Data", "PostalCodeData.dat");
+    
+    try
+    {
+        GeoLookup.Postal.Tools.SampleDataGenerator.CreateSampleData(indexPath, dataPath);
+        Console.WriteLine("✓ Sample data created successfully!");
+        Console.WriteLine($"  Index file: {indexPath}");
+        Console.WriteLine($"  Data file: {dataPath}");
+        Console.WriteLine("\nSample postal codes included:");
+        Console.WriteLine("  90210 - Beverly Hills, CA, US");
+        Console.WriteLine("  10001 - New York, NY, US");
+        Console.WriteLine("  K1A0B1 - Ottawa, ON, CA");
+        Console.WriteLine("  M5V3L9 - Toronto, ON, CA");
+        Console.WriteLine("\nYou can now test the lookup functionality!");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"✗ Error creating sample data: {ex.Message}");
+    }
 }
 
 static async Task DownloadAndProcessData()
