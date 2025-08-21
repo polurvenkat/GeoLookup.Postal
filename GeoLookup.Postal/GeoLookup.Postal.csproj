@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>GeoLookup.Postal</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Authors>QAFarmer</Authors>
+    <Description>High-performance postal code geolocation library using GeoNames data with binary search optimization for US and Canada postal codes.</Description>
+    <PackageLicenseExpression>CC-BY-4.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/qafarmer/geolookup-postal</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/qafarmer/geolookup-postal</RepositoryUrl>
+    <PackageTags>postal-code;geolocation;geonames;canada;usa;binary-search</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="/" />
+    <EmbeddedResource Include="Data\PostalCodeIndex.dat" />
+    <EmbeddedResource Include="Data\PostalCodeData.dat" />
+  </ItemGroup>
+
+</Project>
