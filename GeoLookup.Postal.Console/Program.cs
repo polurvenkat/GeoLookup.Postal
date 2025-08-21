@@ -18,9 +18,39 @@ else
 
 static void RunDemo()
 {
-    Console.WriteLine("\n1. Testing Postal Code Normalization:");
+    Console.WriteLine("\n1. Testing Postal Code Auto-Detection & Normalization:");
     
     var testCodes = new[]
+    {
+        "90210",          // US ZIP
+        "90210-1234",     // US ZIP+4
+        "K1A 0B1",        // Canadian postal code with space
+        "k1a0b1",         // Canadian postal code without space, lowercase
+        "T2X 1V4",        // Another Canadian postal code
+        "invalid",        // Invalid format
+        "123",            // Too short
+        "A1A 1A1"         // Canadian format
+    };
+    
+    Console.WriteLine("Auto-detection (no country code required):");
+    foreach (var code in testCodes)
+    {
+        var country = PostalCodeNormalizer.DetectCountry(code);
+        var normalized = PostalCodeNormalizer.Normalize(code);
+        var isValid = PostalCodeNormalizer.IsValid(code);
+        
+        if (normalized.HasValue)
+        {
+            Console.WriteLine($"  {code} -> {normalized.Value.NormalizedCode} ({normalized.Value.CountryCode}) [Valid: {isValid}]");
+        }
+        else
+        {
+            Console.WriteLine($"  {code} -> INVALID [Valid: {isValid}]");
+        }
+    }
+    
+    Console.WriteLine("\nTraditional method (with country code):");
+    var traditionalTests = new[]
     {
         ("90210", "US"),
         ("90210-1234", "US"),
@@ -30,7 +60,7 @@ static void RunDemo()
         ("123", "CA")
     };
     
-    foreach (var (code, country) in testCodes)
+    foreach (var (code, country) in traditionalTests)
     {
         var normalized = PostalCodeNormalizer.Normalize(code, country);
         var isValid = PostalCodeNormalizer.IsValid(code, country);
@@ -44,11 +74,41 @@ static void RunDemo()
         using var lookup = new PostalCodeLookup();
         Console.WriteLine("✓ PostalCodeLookup initialized successfully");
         
+        Console.WriteLine("\nTesting auto-detection lookup (no country code required):");
+        var autoTestCodes = new[] { "90210", "K1A 0B1", "invalid" };
+        
+        foreach (var code in autoTestCodes)
+        {
+            var autoResult = lookup.Lookup(code);
+            if (autoResult.HasValue)
+            {
+                Console.WriteLine($"  {code} -> Found: {autoResult.Value.PlaceName} at {autoResult.Value.Latitude}, {autoResult.Value.Longitude}");
+            }
+            else
+            {
+                Console.WriteLine($"  {code} -> Not found");
+            }
+        }
+        
+        Console.WriteLine("\nTesting batch lookup with auto-detection:");
+        var batchResults = lookup.LookupBatch(autoTestCodes);
+        foreach (var kvp in batchResults)
+        {
+            if (kvp.Value.HasValue)
+            {
+                Console.WriteLine($"  {kvp.Key} -> {kvp.Value.Value.PlaceName}");
+            }
+            else
+            {
+                Console.WriteLine($"  {kvp.Key} -> Not found");
+            }
+        }
+        
         // Since we don't have real data yet, this will show the structure
         var result = lookup.Lookup("90210", "US");
         if (result.HasValue)
         {
-            Console.WriteLine($"  Found: {result.Value.PlaceName} at {result.Value.Latitude}, {result.Value.Longitude}");
+            Console.WriteLine($"  Traditional lookup: Found: {result.Value.PlaceName} at {result.Value.Latitude}, {result.Value.Longitude}");
         }
         else
         {

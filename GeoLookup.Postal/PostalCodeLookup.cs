@@ -33,6 +33,20 @@ public class PostalCodeLookup : IDisposable
     }
 
     /// <summary>
+    /// Looks up a postal code with automatic country detection.
+    /// </summary>
+    /// <param name="postalCode">The postal code to look up.</param>
+    /// <returns>The postal code location, or null if not found or format is not recognized.</returns>
+    public PostalCodeLocation? Lookup(string postalCode)
+    {
+        var normalized = PostalCodeNormalizer.Normalize(postalCode);
+        if (normalized == null)
+            return null;
+
+        return Lookup(normalized.Value.NormalizedCode, normalized.Value.CountryCode);
+    }
+
+    /// <summary>
     /// Looks up a postal code and returns the geographic location.
     /// </summary>
     /// <param name="postalCode">The postal code to look up.</param>
@@ -53,6 +67,23 @@ public class PostalCodeLookup : IDisposable
 
         var entry = _index[index];
         return ReadLocationFromData(entry);
+    }
+
+    /// <summary>
+    /// Looks up multiple postal codes in batch with automatic country detection.
+    /// </summary>
+    /// <param name="postalCodes">Collection of postal codes to look up.</param>
+    /// <returns>Dictionary with results, keyed by original input postal code.</returns>
+    public Dictionary<string, PostalCodeLocation?> LookupBatch(IEnumerable<string> postalCodes)
+    {
+        var results = new Dictionary<string, PostalCodeLocation?>();
+        
+        foreach (var postalCode in postalCodes)
+        {
+            results[postalCode] = Lookup(postalCode);
+        }
+        
+        return results;
     }
 
     /// <summary>
